@@ -1,5 +1,5 @@
 const mongoose = require ('mongoose');
-
+const validator = require('validator');
 const userSchema = mongoose.Schema({
     firstName:{
         type:String,
@@ -9,20 +9,30 @@ const userSchema = mongoose.Schema({
     lastName:{
         
         type:String,
+        maxLength:20
         
     },
     email:{
         type:String,
         required:true,
         unique:true,
-        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ 
+        lowercase:true,
+        validate:(value)=>{
+            if(!validator.isEmail(value)){
+                throw new Error('Invalid email format' + ' - ' + value);
+            }
+        }
         
     }
         ,
     password:{
         type:String,
         required:true,
-        minLength:6
+        validate:(value)=>{
+            if(!validator.isStrongPassword(value)){
+                throw new Error('Password must be strong');
+            }
+        }
     },
     age:{
         type:Number,
@@ -37,15 +47,25 @@ const userSchema = mongoose.Schema({
         }
     },
     skills:{
-        type:[String]
+        type:[String],
+        required: true
+        
     },
     about:{
         type:String,
-        default:'Hello, I am using DevTinder!'
+        default:'Hello, I am using DevTinder!',
+        maxLength:200
     },
     photoUrl:{
         type:String,
-        default:'https://www.w3schools.com/howto/img_avatar.png'
+        default:'https://www.w3schools.com/howto/img_avatar.png',
+        validate:(value)=>{
+            if(!validator.isURL(value)){
+                throw new Error('Invalid URL format' + ' - ' + value);
+            }
+            
+        }
+        
     }
 },  { timestamps: true });
 

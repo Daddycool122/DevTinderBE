@@ -4,23 +4,38 @@ const app = express();
 const User = require('./models/user')
 
 
-
 app.use(express.json());
 
 // Create/Sign up a User
 app.post('/user',async(req,res)=>{
     
+    
     const user = new User(req.body)
 
     try{
+        const  VALID_FIELDS = ['firstName', 'lastName', 'email', 'password', 'age','gender','skills','about','photoUrl'];
+        const data = req.body;
+        const isValidInput = Object.keys(data).every(k=>VALID_FIELDS.includes(k));
+        
+        if(!isValidInput){
+            throw new Error('Invalid input fields');
+        }
+        
+        if(!data.skills){
+            throw new Error('Please enter some skills');
+        }
+        if(data.skills.length>10){
+        throw new Error('Skills cannot be more than 10');
+       }
+
         await user.save();
-    res.send('User created successfully');
+        res.send('User created successfully');
     }
     catch(err){
         res.status(500).send('Error creating user: ' + err.message);
     }
     
-})
+});
 
 
 // get user by email (find)
@@ -112,11 +127,19 @@ app.post('/user',async(req,res)=>{
 
 // update api (by userId)
 
-app.patch('/user',async (req,res)=>{
+app.patch('/user/:userId',async (req,res)=>{
     try{
-        const userId = req.body.userId;
+
+        const userId = req.params.userId;
         const user = await User.findByIdAndUpdate(userId,req.body,{returnDocument: 'after', runValidators:true});
-        console.log(user);
+        const ALLOWED_UPDATES = ['firstName', 'lastName','gender','photoUrl'];
+        const data = req.body;
+
+        const isValidUpdate = Object.keys(data).every((key)=>ALLOWED_UPDATES.includes(key));
+        
+        if(!isValidUpdate){
+            throw new Error('Invalid update fields');
+        }
         if(!user){
             res.status(400).send('No user fond to update')
         }
