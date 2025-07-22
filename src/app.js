@@ -8,19 +8,19 @@ const User = require('./models/user')
 app.use(express.json());
 
 // Create/Sign up a User
-// app.post('/user',async(req,res)=>{
+app.post('/user',async(req,res)=>{
     
-//     const user = new User(req.body)
+    const user = new User(req.body)
 
-//     try{
-//         await user.save();
-//     res.send('User created successfully');
-//     }
-//     catch(err){
-//         res.status(500).send('Error creating user: ' + err.message);
-//     }
+    try{
+        await user.save();
+    res.send('User created successfully');
+    }
+    catch(err){
+        res.status(500).send('Error creating user: ' + err.message);
+    }
     
-// })
+})
 
 
 // get user by email (find)
@@ -112,24 +112,24 @@ app.use(express.json());
 
 // update api (by userId)
 
-// app.patch('/user',async (req,res)=>{
-//     try{
-//         const userId = req.body.userId;
-//         const user = await User.findByIdAndUpdate(userId,req.body,{returnDocument: 'after'});
-//         console.log(user);
-//         if(!user){
-//             res.status(400).send('No user fond to update')
-//         }
-//         else{
-//              res.send("User updated Successfully")
-//         }
+app.patch('/user',async (req,res)=>{
+    try{
+        const userId = req.body.userId;
+        const user = await User.findByIdAndUpdate(userId,req.body,{returnDocument: 'after', runValidators:true});
+        console.log(user);
+        if(!user){
+            res.status(400).send('No user fond to update')
+        }
+        else{
+             res.send("User updated Successfully")
+        }
         
         
-//     }
-//     catch(err){
-//         res.status(500).send('Error updating user: ' + err.message);
-//     }
-// })
+    }
+    catch(err){
+        res.status(500).send('Error updating user: ' + err.message);
+    }
+})
 
 // update api (by email)
 // app.patch('/user',async(req,res)=>{
