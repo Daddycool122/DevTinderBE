@@ -2,34 +2,33 @@ const express = require('express');
 const {connectDb}=require('./config/database')
 const app = express();
 const User = require('./models/user')
-
+const { validateSignupData } = require('./utils/validation');
+const bcrypt = require('bcrypt');
 
 app.use(express.json());
 
 // Create/Sign up a User
 app.post('/user',async(req,res)=>{
-    
-    
-    const user = new User(req.body)
-
     try{
-        const  VALID_FIELDS = ['firstName', 'lastName', 'email', 'password', 'age','gender','skills','about','photoUrl'];
-        const data = req.body;
-        const isValidInput = Object.keys(data).every(k=>VALID_FIELDS.includes(k));
-        
-        if(!isValidInput){
-            throw new Error('Invalid input fields');
-        }
-        
-        if(!data.skills){
-            throw new Error('Please enter some skills');
-        }
-        if(data.skills.length>10){
-        throw new Error('Skills cannot be more than 10');
-       }
+        // Validate the data
+        validateSignupData (req);
 
+        // Encrypt the password
+        const {firstName, lastName, email, password} = req.body;
+
+        const hashedPassword = await bcrypt.hash(password,10);
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            password:hashedPassword,
+        })
+
+        // Save the user to the database
         await user.save();
         res.send('User created successfully');
+
+        
     }
     catch(err){
         res.status(500).send('Error creating user: ' + err.message);
