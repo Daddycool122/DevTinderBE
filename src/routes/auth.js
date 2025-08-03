@@ -1,6 +1,6 @@
 const express = require('express');
 const authRouter = express.Router();
-const { validateSignupData } = require('../utils/validation');
+const { validateSignupData,validateLoginData } = require('../utils/validation');
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 
@@ -37,6 +37,8 @@ authRouter.post('/user',async(req,res)=>{
 // Login  api
 authRouter.post('/signIn',async(req,res)=>{
     try{
+
+        validateLoginData(req)
         const {email,password} = req.body;
         const user = await User.findOne({email: email});
 
