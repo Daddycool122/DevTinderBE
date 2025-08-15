@@ -44,7 +44,8 @@ profileRouter.patch('/profile/edit',userAuth,async(req,res)=>{
 
             const validFields = ['currentPassword', 'newPassword', 'confirmNewPassword'];
             
-            const isValid = Object.keys(req.body).every(field => validFields.includes(field));
+            const isValid = Object.keys(req.body).every(field => validFields.includes(field)) 
+                            && validFields.every(field => Object.keys(req.body).includes(field))
             if(!isValid){
                 throw new Error('Invalid fields for password change');
             }
@@ -63,7 +64,7 @@ profileRouter.patch('/profile/edit',userAuth,async(req,res)=>{
             }
 
             const newPasswordHash = await bcrypt.hash(newPassword,10);
-            user.password = newPasswordHash;
+            loggedInUser.password = newPasswordHash;
             await loggedInUser.save();
 
             res.send('Password changed successfully');

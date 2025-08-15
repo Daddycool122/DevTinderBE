@@ -138,6 +138,12 @@ skip = (page-1)*limit;
 
  
 
+ ## API's
+
+ ## profileRouter
+ - GET /profile/view
+ - PATCH /profile/edit
+
 
 
 
