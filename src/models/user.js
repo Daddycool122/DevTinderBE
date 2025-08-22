@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
       lowercase: true,
       validate: (value) => {
         if (!validator.isEmail(value)) {
@@ -36,6 +37,7 @@ const userSchema = mongoose.Schema(
     age: {
       type: Number,
       min: 18,
+      max:50
     },
     gender: {
       type: String,
@@ -52,6 +54,7 @@ const userSchema = mongoose.Schema(
     skills: {
       type: [String],
       required: true,
+      max:5
     },
     about: {
       type: String,
@@ -71,7 +74,6 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.index({ email: 1 });
 
 userSchema.methods.getJWT = async function () {
   const user = this;

@@ -10,9 +10,13 @@ authRouter.post('/user',async(req,res)=>{
     try{
         // Validate the data
         validateSignupData (req);
-
         // Encrypt the password
         const {firstName, lastName, email, password} = req.body;
+
+        const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
 
         const hashedPassword = await bcrypt.hash(password,10);
         const user = new User({
@@ -23,8 +27,20 @@ authRouter.post('/user',async(req,res)=>{
         })
 
         // Save the user to the database
-        await user.save();
-        res.send('User created successfully');
+        const savedUser = await user.save();
+
+         const token = await user.getJWT();
+ 
+            res.cookie('token', token , {
+            expires: new Date(Date.now() + 6 * 3600000) // cookie will be removed after 1 hour
+            });
+            
+        res.status(200).json({
+            message:"User saved successfully",
+            data: savedUser
+        });
+
+       
 
         
     }
@@ -57,9 +73,12 @@ authRouter.post('/signIn',async(req,res)=>{
             const token = await user.getJWT();
  
             res.cookie('token', token , {
-            expires: new Date(Date.now() + 1 * 3600000) // cookie will be removed after 1 hour
+            expires: new Date(Date.now() + 6 * 3600000) // cookie will be removed after 1 hour
             });
-            res.send('Logged in as : ' +user.firstName + ' ' + user.lastName);
+            res.json({
+                message: "logged in as: "+user.firstName,
+                data: user
+            });
         }
 
         

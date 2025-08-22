@@ -9,15 +9,18 @@ const bcrypt = require('bcrypt');
 profileRouter.get('/profile/view',userAuth,async(req,res)=>{
     try{
         const user = req.user
-        res.send(user)
+        res.json({
+            message:"User data fetched successfully",
+            data: user,
+        })
     }
     catch(err){
-        res.status(500).send('Error signing in: ' + err.message);
+        res.status(500).send('Error viewing user : ' + err.message);
     }
 })
 
 // edit profile api
-profileRouter.patch('/profile/edit',userAuth,async(req,res)=>{
+profileRouter.post('/profile/edit',userAuth,async(req,res)=>{
     try{
         if(!validateEditProfileData(req)){
             throw new Error('Invalid fields being edited');

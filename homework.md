@@ -145,5 +145,21 @@ skip = (page-1)*limit;
  - PATCH /profile/edit
 
 
+ ## Whose profile should logged in user see on FEED api
+
+ - It should not see the profile of  his connections
+ - It should not see the profile of  people whom he has ignored or interested in 
+ - It should not see the profile of  himself
+ // User should see all the profiles except :
+    //    His own card
+    //    His connections
+    //    Ignored people
+    //    Already sent the connection request
+    //
+    //  Example:
+    //    If there is any entry of the logged in user in connection req with someone
+    //    then it should not see the profile of that "someone" ever in feed api
+
+
 
 
