@@ -7,7 +7,7 @@ const userAuth = async(req,res,next)=>{
                 res.status(401).send('You are not logged in , please login...');
             } 
             
-            const decodedMessage = jwt.verify(token, 'Akhil@123');
+            const decodedMessage = jwt.verify(token, process.env.JWT_SECRET);
             const {userId} = decodedMessage;
 
 

@@ -15,6 +15,7 @@ const corsOptions = {
 //  Enable CORS with options
 app.use(cors(corsOptions));
 
+
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
@@ -24,6 +25,7 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+require('dotenv').config();
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
@@ -34,8 +36,8 @@ app.use("/", userRouter);
 connectDb()
   .then(() => {
     console.log("Database connected successfully");
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+    app.listen(process.env.PORT, () => {
+      console.log("Server is running on port " + process.env.PORT);
     });
   })
   .catch((error) => {
